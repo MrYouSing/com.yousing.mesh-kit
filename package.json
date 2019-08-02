@@ -1,0 +1,10 @@
+{
+    "name": "com.yousing.mesh-kit",
+    "displayName": "Mesh Kit",
+    "version": "1.0.0",
+    "unity": "2019.2",
+    "description": "The mesh kit is developed by YouSing.",
+    "keywords": ["3d"],
+    "category": "3D",
+    "dependencies": {}
+}
