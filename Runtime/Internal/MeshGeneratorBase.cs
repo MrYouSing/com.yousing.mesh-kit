@@ -33,6 +33,12 @@ namespace YouSingStudio.MeshKit {
 
 		#region Methods
 
+		protected virtual void EnsureSize<T>(ref T[] array,int size) {
+			if(array==null||array.Length!=size) {
+				array=new T[size];
+			}
+		}
+
 		[ContextMenu("Build Mesh")]
 		public virtual void BuildMesh() {
 			OnPreBuildMesh();

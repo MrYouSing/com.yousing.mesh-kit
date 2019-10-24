@@ -3,6 +3,7 @@ using UnityEngine.Animations;
 
 namespace YouSingStudio.MeshKit {
 
+	[System.Obsolete]
 	public class CurvedSurfaceGenerator:MeshGeneratorBase {
 
 		#region Nested Types
