@@ -2,8 +2,11 @@ using UnityEngine;
 
 namespace YouSingStudio.MeshKit {
 
-	public class CircularCurve:MonoTransformCurve {
-		#region Fields
+	public class CircularTransformCurve
+		:MonoTransformCurve
+	{
+
+		#region Nested Types
 
 		public enum ValueIndex {
 			 RadiusX
@@ -13,9 +16,10 @@ namespace YouSingStudio.MeshKit {
 			,Scale
 		}
 
-		[Header("Time")]
-		public float time=1.0f;
-		public float deltaTime=0.1f;
+		#endregion Nested Types
+
+		#region Fields
+
 		public float speed=360.0f;
 		public bool isRotationLock=true;
 

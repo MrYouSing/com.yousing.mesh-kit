@@ -8,8 +8,17 @@ namespace YouSingStudio.MeshKit {
 		#region Fields
 
 		public Transform reference;
+		public float time=1.0f;
+		public float deltaTime=1.0f/60.0f;
 
 		#endregion Fields
+
+		#region Unity Messages
+
+		protected virtual void Reset() {
+		}
+
+		#endregion Unity Messages
 
 		#region Methods
 
