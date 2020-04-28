@@ -28,7 +28,7 @@ namespace YouSingStudio.MeshKit {
 						list.Add(t2);
 					}
 				}
-				mesh.triangles=list.ToArray();
+				SetTriangles(mesh,list.ToArray());
 			}
 			EndModifyMesh(mesh);
 		}

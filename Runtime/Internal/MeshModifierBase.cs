@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace YouSingStudio.MeshKit {
 
@@ -18,6 +19,22 @@ namespace YouSingStudio.MeshKit {
 
 		#region Methods
 
+		public static void ForEach(IList<int> triangles,System.Action<int> action) {
+			if(triangles==null||action==null) {
+				return;
+			}
+			//
+			HashSet<int> hs=new HashSet<int>();
+			int t;
+			for(int i=0,imax=triangles.Count;i<imax;++i) {
+				t=triangles[i];
+				if(!hs.Contains(t)) {
+					hs.Add(t);
+					action(t);
+				}
+			}
+		}
+
 		public override void Run() {
 			Mesh mesh=BeginModifyMesh();
 			EndModifyMesh(mesh);
@@ -32,6 +49,16 @@ namespace YouSingStudio.MeshKit {
 			return null;
 		}
 
+		protected virtual void SetTriangles(Mesh mesh,int[] triangles) {
+			if(mesh!=null) {
+				if(submesh>=0) {
+					mesh.SetIndices(triangles,MeshTopology.Triangles,submesh);
+				}else {
+					mesh.triangles=triangles;
+				}
+			}
+		}
+
 		protected virtual Mesh BeginModifyMesh() {
 			Mesh mesh=this.mesh;
 			//
@@ -42,9 +69,9 @@ namespace YouSingStudio.MeshKit {
 			//
 			if(mesh!=null) {
 			if(useClone) {
-				Mesh copy=Object.Instantiate(mesh);
-				mesh=copy;
-			}}
+			if(mesh.name.IndexOf("(Clone)")<0) {
+				mesh=Object.Instantiate(mesh);
+			}}}
 			//
 			return mesh;
 		}

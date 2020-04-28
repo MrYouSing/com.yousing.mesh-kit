@@ -42,7 +42,7 @@ namespace YouSingStudio.MeshKit {
 
 		public virtual Vector3 GetScale(float t) {
 			Vector3 v=Internal_GetScale(t);
-			return (reference!=null)?reference.TransformVector(v):v;
+			return (reference!=null)?Vector3.Scale(reference.lossyScale,v):v;
 		}
 
 		public virtual Matrix4x4 GetMatrix(float t) {
