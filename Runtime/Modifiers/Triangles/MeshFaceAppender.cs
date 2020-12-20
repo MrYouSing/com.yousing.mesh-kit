@@ -62,7 +62,7 @@ namespace YouSingStudio.MeshKit {
 			Mesh mesh=BeginModifyMesh();
 			if(mesh!=null) {
 				List<int> triangles=new List<int>(GetTriangles(mesh));
-				if(isOverride){triangles.Clear()}
+				if(isOverride){triangles.Clear();}
 				switch(mode) {
 					case GL.TRIANGLES:
 						AddTriangles(triangles,data);
