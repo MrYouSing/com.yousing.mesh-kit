@@ -60,7 +60,7 @@ namespace YouSingStudio.MeshKit {
 		}
 
 		protected virtual Mesh BeginModifyMesh() {
-			Mesh mesh=this.mesh;
+			Mesh mesh=s_Mesh!=null?s_Mesh:this.mesh;
 			//
 			if(mesh==null) {
 			if(target!=null) {

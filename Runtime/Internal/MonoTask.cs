@@ -20,6 +20,8 @@ namespace YouSingStudio.MeshKit {
 
 		#region Fields
 
+		public static Mesh s_Mesh=null;
+
 		public RunType runType=RunType.Start;
 
 		#endregion Fields
@@ -59,6 +61,14 @@ namespace YouSingStudio.MeshKit {
 		#endregion Unity Messages
 
 		#region Methods
+
+		public static void Run(MonoTask task,Mesh mesh) {
+			if(task!=null&&mesh!=null) {
+				s_Mesh=mesh;
+					task.Run();
+				s_Mesh=null;
+			}
+		}
 
 		[ContextMenu("Run")]
 		public virtual void RunIfActive() {

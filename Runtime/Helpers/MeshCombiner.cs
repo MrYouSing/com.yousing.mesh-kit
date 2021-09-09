@@ -27,10 +27,8 @@ namespace YouSingStudio.MeshKit {
 		public static Mesh EndCombineMeshes(List<CombineInstance> combines) {
 			Mesh mesh=new Mesh();
 			mesh.CombineMeshes(combines.ToArray());
-			mesh.RecalculateBounds();
-			mesh.RecalculateNormals();
 			//
-			s_CombineInstances.Clear();
+			combines.Clear();
 			return mesh;
 		}
 
@@ -40,6 +38,7 @@ namespace YouSingStudio.MeshKit {
 			var combines=BeginCombineMeshes();
 			MeshFilter mf;
 			Renderer r;
+			//
 			for(int i=0,imax=meshFilters?.Count??0;i<imax;++i) {
 				mf=meshFilters[i];
 				r=(mf==null)?null:mf.GetComponent<Renderer>();
@@ -50,6 +49,7 @@ namespace YouSingStudio.MeshKit {
 					);
 				}
 			}
+			//
 			return EndCombineMeshes(combines);
 		}
 
@@ -58,8 +58,8 @@ namespace YouSingStudio.MeshKit {
 		public static Mesh CombineMeshes(IList<SkinnedMeshRenderer> skinnedMeshRenderers,Matrix4x4 worldToLocalMatrix,out Transform[] bones) {
 			var combines=BeginCombineMeshes();
 			var list=s_Transforms;
-			//
 			SkinnedMeshRenderer smr;
+			//
 			for(int i=0,imax=skinnedMeshRenderers?.Count??0;i<imax;++i) {
 				smr=skinnedMeshRenderers[i];
 				if(smr!=null&&smr.IsActiveAndEnabled()) {
@@ -72,22 +72,26 @@ namespace YouSingStudio.MeshKit {
 			}
 			bones=list.ToArray();
 			//
-			s_Transforms.Clear();
+			list.Clear();
 			return EndCombineMeshes(combines);
 		}
 
-		public static void CombineTo(IList<MeshFilter> meshFilters,MeshFilter meshFilter) {
+		public static Mesh CombineTo(IList<MeshFilter> meshFilters,MeshFilter meshFilter) {
 			Mesh mesh=CombineMeshes(meshFilters,meshFilter.transform.worldToLocalMatrix);
 			mesh.name=meshFilter.name;
 			meshFilter.sharedMesh=mesh;
+			//
+			return mesh;
 		}
 
-		public static void CombineTo(IList<SkinnedMeshRenderer> skinnedMeshRenderers,SkinnedMeshRenderer skinnedMeshRenderer) {
+		public static Mesh CombineTo(IList<SkinnedMeshRenderer> skinnedMeshRenderers,SkinnedMeshRenderer skinnedMeshRenderer) {
 			Transform[] bones;
 			Mesh mesh=CombineMeshes(skinnedMeshRenderers,skinnedMeshRenderer.transform.worldToLocalMatrix,out bones);
 			mesh.name=skinnedMeshRenderer.name;
 			skinnedMeshRenderer.sharedMesh=mesh;
 			skinnedMeshRenderer.bones=bones;
+			//
+			return mesh;
 		}
 
 		#endregion Statics
@@ -95,9 +99,12 @@ namespace YouSingStudio.MeshKit {
 		#region Fields
 
 		public MeshFilter meshFilter;
-		public MeshFilter[] meshFilters=new MeshFilter[0];
+		public List<MeshFilter> meshFilters;
 		public SkinnedMeshRenderer skinnedMeshRenderer;
-		public SkinnedMeshRenderer[] skinnedMeshRenderers=new SkinnedMeshRenderer[0];
+		public List<SkinnedMeshRenderer> skinnedMeshRenderers;
+
+		public bool includeInactive=false;
+		public MonoTask task;
 
 		#endregion Fields
 
@@ -118,7 +125,7 @@ namespace YouSingStudio.MeshKit {
 			Renderer r;
 			MeshFilter mf;
 			//
-			i=meshFilters?.Length??0;
+			i=meshFilters?.Count??0;
 			while(i-->0) {
 				mf=meshFilters[i];
 				if(mf!=null) {
@@ -129,7 +136,7 @@ namespace YouSingStudio.MeshKit {
 				}
 			}
 			//
-			i=skinnedMeshRenderers?.Length??0;
+			i=skinnedMeshRenderers?.Count??0;
 			while(i-->0) {
 				r=skinnedMeshRenderers[i];
 				if(r!=null) {
@@ -138,42 +145,30 @@ namespace YouSingStudio.MeshKit {
 			}
 		}
 
-		public override void Run() {
+		protected virtual void CombineRenderers<T>(ref List<T> source,ref T destination,System.Func<IList<T>,T,Mesh> func) where T:Component {
 			int imax;
+			Mesh mesh=null;
 			//
-			imax=meshFilters.Length;
+			imax=source?.Count??0;
 			if(imax==0) {
-				meshFilters=this.GetComponentsInChildren<MeshFilter>(false);
-				imax=meshFilters.Length;
+				if(source==null) {source=new List<T>();}
+				else {source.Clear();}
+				GetComponentsInChildren(includeInactive,source);
+				imax=source.Count;
 				if(imax>0) {
-					if(meshFilters[0].transform==transform) {
-						meshFilters[0]=null;
-					}
+					if(source[0].transform==transform) {source[0]=null;}
 				}
 			}
 			if(imax>0) {
-				if(meshFilter==null) {
-					meshFilter=this.AddMissingComponent<MeshFilter>();
-				}
-				CombineTo(meshFilters,meshFilter);
+				if(destination==null) {destination=this.AddMissingComponent<T>();}
+				if(func!=null) {mesh=func(source,destination);}
+				MonoTask.Run(task,mesh);
 			}
-			//
-			imax=skinnedMeshRenderers.Length;
-			if(imax==0) {
-				skinnedMeshRenderers=this.GetComponentsInChildren<SkinnedMeshRenderer>(false);
-				imax=skinnedMeshRenderers.Length;
-				if(imax>0) {
-					if(skinnedMeshRenderers[0].transform==transform) {
-						skinnedMeshRenderers[0]=null;
-					}
-				}
-			}
-			if(imax>0) {
-				if(skinnedMeshRenderer==null) {
-					skinnedMeshRenderer=this.AddMissingComponent<SkinnedMeshRenderer>();
-				}
-				CombineTo(skinnedMeshRenderers,skinnedMeshRenderer);
-			}
+		}
+
+		public override void Run() {
+			CombineRenderers(ref meshFilters,ref meshFilter,CombineTo);
+			CombineRenderers(ref skinnedMeshRenderers,ref skinnedMeshRenderer,CombineTo);
 			SetSubRenderersEnabled(false);
 		}
 
