@@ -104,6 +104,7 @@ namespace YouSingStudio.MeshKit {
 		public List<SkinnedMeshRenderer> skinnedMeshRenderers;
 
 		public bool includeInactive=false;
+		public bool fixTransforms=false;
 		public MonoTask task;
 
 		#endregion Fields
@@ -160,6 +161,16 @@ namespace YouSingStudio.MeshKit {
 				}
 			}
 			if(imax>0) {
+				if(fixTransforms) {
+					Transform t=destination.transform;
+					T it;
+					for(int i=0;i<imax;++i) {
+						it=source[i];
+						if(it!=null) {
+							it.transform.SetParent(t,false);
+						}
+					}
+				}
 				if(destination==null) {destination=this.AddMissingComponent<T>();}
 				if(func!=null) {mesh=func(source,destination);}
 				MonoTask.Run(task,mesh);
