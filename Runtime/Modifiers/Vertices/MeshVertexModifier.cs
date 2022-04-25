@@ -6,6 +6,7 @@ namespace YouSingStudio.MeshKit {
 
 		#region Fields
 
+		public bool recalculate=true;
 		public Transform reference;
 
 		#endregion Fields
@@ -24,8 +25,10 @@ namespace YouSingStudio.MeshKit {
 					vertices[i]=ModifyVertex(vertices[i]);
 				}
 				mesh.vertices=vertices;
-				mesh.RecalculateBounds();
-				mesh.RecalculateNormals();
+				if(recalculate) {
+					mesh.RecalculateBounds();
+					mesh.RecalculateNormals();
+				}
 			}
 			EndModifyMesh(mesh);
 		}

@@ -8,6 +8,7 @@ namespace YouSingStudio.MeshKit {
 		#region Fields
 
 		public bool buildOnAwake=true;
+		public bool recalculate=true;
 		public Mesh mesh;
 		public GameObject target;
 
@@ -63,8 +64,10 @@ namespace YouSingStudio.MeshKit {
 			if(m_Colors!=null) {mesh.colors=m_Colors;}
 			if(m_Triangles!=null) {mesh.triangles=m_Triangles;}
 			//
-			mesh.RecalculateNormals();
-			mesh.RecalculateBounds();
+			if(recalculate) {
+				mesh.RecalculateNormals();
+				mesh.RecalculateBounds();
+			}
 		}
 
 		protected virtual void OnPostBuildMesh() {
