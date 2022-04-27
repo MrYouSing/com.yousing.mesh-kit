@@ -1,7 +1,7 @@
 ﻿// <!-- Macro.Copy -->
 using UnityEngine;
 
-namespace YouSingStudio.Graphics {
+namespace YouSingStudio.MeshKit {
 
 	public static partial class $(FileName) {
 // <!-- Macro.End -->
@@ -65,7 +65,31 @@ namespace YouSingStudio.Graphics {
 GameObject
 Component
  Macro.End --> */
+/* <!-- Macro.Define GetUVs
+					case {0}:return thiz.uv{0};
+ Macro.End --> */
+// <!-- Macro.Copy -->
 
+		public static Vector2[] GetUVs(this Mesh thiz,int channel) {
+			if(thiz!=null) {
+				switch(channel+1) {
+// <!-- Macro.End -->
+/* <!-- Macro.Call GetUVs
+2,
+3,
+4,
+5,
+6,
+7,
+8,
+ Macro.End --> */
+// <!-- Macro.Copy -->
+					default:return thiz.uv;
+				}
+			}
+			return null;
+		}
+// <!-- Macro.End -->
 // <!-- Macro.Copy -->
 	}
 }
