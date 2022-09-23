@@ -22,7 +22,7 @@ namespace YouSingStudio.MeshKit {
 			return TestIndex(a)||TestIndex(b)||TestIndex(c);
 		}
 
-		public virtual List<int> SelectTriangles(Mesh mesh,List<int> triangles,List<int> result=null) {
+		public virtual List<int> SelectTriangles(Mesh mesh,IList<int> triangles,List<int> result=null) {
 			BeginSelect(mesh);
 				int i=0,imax=triangles?.Count??0;
 				int a,b,c;
@@ -35,6 +35,25 @@ namespace YouSingStudio.MeshKit {
 					c=triangles[3*i+2];
 					if(TestTriangle(a,b,c)) {
 						result.Add(3*i);
+					}
+				}
+			EndSelect(mesh);
+			return result;
+		}
+
+		public virtual List<int> SelectVertices(Mesh mesh,IList<int> triangles,List<int> result=null) {
+			BeginSelect(mesh);
+				int i=0,imax=triangles?.Count??0;
+				int a,b,c;
+				if(result==null) {
+					result=new List<int>(imax);
+				}
+				for(imax/=3;i<imax;++i) {
+					a=triangles[3*i+0];
+					b=triangles[3*i+1];
+					c=triangles[3*i+2];
+					if(TestTriangle(a,b,c)) {
+						result.Add(a);result.Add(b);result.Add(c);
 					}
 				}
 			EndSelect(mesh);

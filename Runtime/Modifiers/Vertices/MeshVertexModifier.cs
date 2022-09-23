@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace YouSingStudio.MeshKit {
 
@@ -8,6 +9,7 @@ namespace YouSingStudio.MeshKit {
 
 		public bool recalculate=true;
 		public Transform reference;
+		public MeshSelectorBase selector;
 
 		#endregion Fields
 
@@ -20,9 +22,16 @@ namespace YouSingStudio.MeshKit {
 		public override void Run() {
 			Mesh mesh=BeginModifyMesh();
 			if(mesh!=null) {
+				List<int> selection=null;
+				if(selector!=null) {
+					List<int> triangles=new List<int>(GetTriangles(mesh));
+					selection=selector.SelectVertices(mesh,triangles);
+				}
 				Vector3[] vertices=mesh.vertices;
 				for(int i=0,imax=vertices?.Length??0;i<imax;++i) {
-					vertices[i]=ModifyVertex(vertices[i]);
+					if(selection==null||selection.IndexOf(i)>=0) {
+						vertices[i]=ModifyVertex(vertices[i]);
+					}
 				}
 				mesh.vertices=vertices;
 				if(recalculate) {

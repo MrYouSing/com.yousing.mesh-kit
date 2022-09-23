@@ -120,8 +120,15 @@ namespace YouSingStudio.MeshKit {
 		protected virtual void DisableSubRenderers()
 			=>SetSubRenderersEnabled(false);
 #endif
+		protected virtual void SetMainRendererEnabled(bool value) {
+			Renderer r=(meshFilter!=null)?meshFilter.GetComponent<Renderer>():null;
+			if(r!=null) {r.enabled=value;}
+			r=skinnedMeshRenderer;
+			if(r!=null) {r.enabled=value;}
+		}
 
 		public virtual void SetSubRenderersEnabled(bool value) {
+			if(value) {SetMainRendererEnabled(value);}
 			int i;
 			Renderer r;
 			MeshFilter mf;
@@ -144,6 +151,8 @@ namespace YouSingStudio.MeshKit {
 					r.enabled=value;
 				}
 			}
+			//
+			if(!value) {SetMainRendererEnabled(!value);}
 		}
 
 		protected virtual void CombineRenderers<T>(ref List<T> source,ref T destination,System.Func<IList<T>,T,Mesh> func) where T:Component {
