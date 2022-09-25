@@ -9,6 +9,7 @@ namespace YouSingStudio.MeshKit {
 
 		public static List<int> s_TrianglesHelper=new List<int>();
 
+		public TextureWrapMode wrapMode;
 		public Sprite sprite;
 		public Vector2 offset=Vector2.zero;
 		public Vector2 scale=Vector2.one;
@@ -16,6 +17,14 @@ namespace YouSingStudio.MeshKit {
 		#endregion Fields
 
 		#region Methods
+
+		protected virtual void Prepare(ref Vector2 uv) {
+			switch(wrapMode) {
+				case TextureWrapMode.Repeat:
+					uv.Set(Mathf.Repeat(uv.x,1.0f),Mathf.Repeat(uv.y,1.0f));
+				break;
+			}
+		}
 
 		[ContextMenu("Run")]
 		public override void Run() {
@@ -37,6 +46,7 @@ namespace YouSingStudio.MeshKit {
 				if(submesh<0) {
 					for(int i=0,imax=uvs?.Length??0;i<imax;++i) {
 						uv=uvs[i];
+							Prepare(ref uv);
 							uv.Set(
 								scale.x*uv.x+offset.x,
 								scale.y*uv.y+offset.y
@@ -52,6 +62,7 @@ namespace YouSingStudio.MeshKit {
 							list.Add(t);
 							//
 							uv=uvs[t];
+								Prepare(ref uv);
 								uv.Set(
 									scale.x*uv.x+offset.x,
 									scale.y*uv.y+offset.y

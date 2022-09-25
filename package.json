@@ -6,5 +6,7 @@
     "description": "The mesh kit is developed by YouSing.",
     "keywords": ["3d"],
     "category": "3D",
-    "dependencies": {}
+    "dependencies": {
+        "com.unity.nuget.newtonsoft-json": "2.0.0"
+    }
 }

@@ -6,9 +6,11 @@ namespace YouSingStudio.MeshKit {
 	{
 		#region Fields
 
+		public TextureWrapMode wrapMode;
 		public Material material;
 		public Mesh[] meshes;
 		public Color[] colors;
+		public int[] submeshes;
 		[System.NonSerialized]public RenderTexture renderTexture;
 
 		#endregion Fields
@@ -49,6 +51,11 @@ namespace YouSingStudio.MeshKit {
 #endif
 			int[] triangles=submesh>=0?mesh.GetTriangles(submesh):mesh.triangles;
 			Vector2[] uv=mesh.uv;
+			if(wrapMode==TextureWrapMode.Repeat) {
+				for(int i=0,imax=uv.Length;i<imax;++i) {
+					uv[i]=new Vector2(Mathf.Repeat(uv[i].x,1.0f),Mathf.Repeat(uv[i].y,1.0f));
+				}
+			}
 			PushRenderTexture(renderTexture);
 			GL.PushMatrix();
 				GL.LoadOrtho();
@@ -69,7 +76,7 @@ namespace YouSingStudio.MeshKit {
 		public virtual void Render() {
 			int i=0,imax=Mathf.Min(meshes?.Length??0,colors?.Length??0);
 			for(;i<imax;++i) {
-				Render(meshes[i],colors[i]);
+				Render(meshes[i],colors[i],submeshes[i]);
 			}
 			Flush();
 		}

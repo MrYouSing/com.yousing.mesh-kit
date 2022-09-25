@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace YouSingStudio.MeshKit {
 	public static partial class BoneWeightHelper
@@ -38,6 +39,16 @@ namespace YouSingStudio.MeshKit {
 				case 1:thiz.boneIndex1=n;break;
 				case 2:thiz.boneIndex2=n;break;
 				case 3:thiz.boneIndex3=n;break;
+			}
+		}
+
+		public static void SetBoneIndex(ref BoneWeight thiz,IDictionary<int,int> m) {
+			if(m!=null) {
+				int i;
+				i=thiz.boneIndex0;if(i>=0) {thiz.boneIndex0=m[i];}
+				i=thiz.boneIndex1;if(i>=0) {thiz.boneIndex1=m[i];}
+				i=thiz.boneIndex2;if(i>=0) {thiz.boneIndex2=m[i];}
+				i=thiz.boneIndex3;if(i>=0) {thiz.boneIndex3=m[i];}
 			}
 		}
 	}
