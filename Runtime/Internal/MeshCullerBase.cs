@@ -4,6 +4,9 @@ using UnityEngine;
 namespace YouSingStudio.MeshKit {
 	public abstract class MeshCullerBase:MeshModifierBase {
 		#region Fields
+
+		public bool optimize;
+
 		#endregion Fields
 
 		#region Methods
@@ -29,6 +32,7 @@ namespace YouSingStudio.MeshKit {
 					}
 				}
 				SetTriangles(mesh,list.ToArray());
+				if(optimize) {mesh.Optimize();}
 			}
 			EndModifyMesh(mesh);
 		}

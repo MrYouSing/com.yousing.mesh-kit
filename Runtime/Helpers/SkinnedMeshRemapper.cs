@@ -5,7 +5,7 @@ namespace YouSingStudio.MeshKit {
 	/// <summary>
 	/// 
 	/// </summary>
-	public class SkinnedMeshBoneRemapper:MonoTask {
+	public class SkinnedMeshRemapper:MonoTask {
 
 		#region Fields
 

@@ -98,6 +98,7 @@ namespace YouSingStudio.MeshKit {
 				if(smr!=null) {
 					smr.rootBone=rootBone;
 					smr.bones=bones;
+					smr.sharedMesh=mesh;
 				}
 			}}}
 			//

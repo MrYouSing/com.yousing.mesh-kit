@@ -178,7 +178,7 @@ namespace YouSingStudio.MeshKit {
 				GetComponentsInChildren(includeInactive,source);
 				imax=source.Count;
 				if(imax>0) {
-					if(source[0].transform==transform) {source[0]=null;}
+					if(source[0].transform==transform) {source[0]=null;--imax;}
 				}
 			}
 			if(imax>0) {

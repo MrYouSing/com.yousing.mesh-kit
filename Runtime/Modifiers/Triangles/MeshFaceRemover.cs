@@ -9,6 +9,7 @@ namespace YouSingStudio.MeshKit {
 
 		public MeshSelectorBase selector;
 		public bool value=false;
+		public bool optimize;
 
 		#endregion Fields
 
@@ -41,6 +42,7 @@ namespace YouSingStudio.MeshKit {
 					}
 				}
 				SetTriangles(mesh,triangles.ToArray());
+				if(optimize) {mesh.Optimize();}
 			}
 			EndModifyMesh(mesh);
 		}

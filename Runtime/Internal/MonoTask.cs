@@ -13,6 +13,7 @@ namespace YouSingStudio.MeshKit {
 			OnDestroy,
 			OnEnable,
 			OnDisable,
+			OnStartOrEnable,
 			Count
 		}
 
@@ -35,8 +36,14 @@ namespace YouSingStudio.MeshKit {
 		}
 
 		protected virtual void Start() {
-			if(runType==RunType.Start) {
-				Run();
+			switch(runType) {
+				case RunType.Start:
+					Run();
+				break;
+				case RunType.OnStartOrEnable:
+					runType=RunType.OnEnable;
+					Run();
+				break;
 			}
 		}
 
@@ -66,6 +73,14 @@ namespace YouSingStudio.MeshKit {
 			if(task!=null&&mesh!=null) {
 				s_Mesh=mesh;
 					task.Run();
+				s_Mesh=null;
+			}
+		}
+
+		public virtual void Run(Mesh mesh) {
+			if(mesh!=null) {
+				s_Mesh=mesh;
+					this.Run();
 				s_Mesh=null;
 			}
 		}

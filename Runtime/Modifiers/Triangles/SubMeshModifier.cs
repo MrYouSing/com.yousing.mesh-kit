@@ -13,6 +13,11 @@ namespace YouSingStudio.MeshKit {
 			Mesh mesh=BeginModifyMesh();
 			if(mesh!=null) {
 				mesh.triangles=mesh.GetTriangles(submesh);
+				//
+				if(target!=null) {
+					Renderer r=target.GetComponent<Renderer>();
+					if(r!=null) {r.sharedMaterials=new Material[]{r.sharedMaterial};}
+				}
 			}
 			EndModifyMesh(mesh);
 		}
