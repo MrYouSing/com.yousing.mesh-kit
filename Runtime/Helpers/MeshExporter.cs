@@ -20,7 +20,9 @@ namespace YouSingStudio.MeshKit {
 			string path=this.path;
 			if(string.IsNullOrEmpty(path)) {
 				if(destination==null) {return;}
-				path=AssetDatabase.GetAssetPath(destination);
+				if(!AssetDatabase.IsSubAsset(destination)) {
+					path=AssetDatabase.GetAssetPath(destination);
+				}
 			}
 			Mesh mesh=source as Mesh;
 			if(mesh==null) {
@@ -33,7 +35,15 @@ namespace YouSingStudio.MeshKit {
 				go.SetSharedMesh(mesh);
 			}
 			//
-			AssetDatabase.CreateAsset(mesh,path);
+			if(!string.IsNullOrEmpty(path)) {
+				AssetDatabase.CreateAsset(mesh,path);
+			}else {
+				Mesh dst=destination as Mesh;
+				if(dst!=null) {
+					Mesh.ApplyAndDisposeWritableMeshData(Mesh.AcquireReadOnlyMeshData(mesh),dst);
+					dst.RecalculateBounds();EditorUtility.SetDirty(dst);
+				}
+			}
 			AssetDatabase.Refresh();
 #endif
 		}
