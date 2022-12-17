@@ -10,7 +10,7 @@ namespace YouSingStudio.MeshKit {
 		[SerializeField]protected Object m_Curve;
 		public ITransformCurve curve;
 
-		public Vector4 uvMatrix=new Vector4(1.0f,0.0f,0.0f,1.0f);
+		public Matrix2D uvMatrix=Matrix2D.identity;
 		public LineRenderer line;
 		public Vector3[] points=new Vector3[0];
 
@@ -52,8 +52,8 @@ namespace YouSingStudio.MeshKit {
 				//
 				for(j=0;j<jmax;++j) {
 					m_Vertices[p]=m.MultiplyPoint3x4(points[j]);
-					m_UVs[p]=UnityExtension.Matrix22_Mul(uvMatrix
-						,new Vector2((float)j/(jmax-1),i/(float)(imax-1)));
+					m_UVs[p]=uvMatrix.MultiplyPoint(
+						new Vector2((float)j/(jmax-1),i/(float)(imax-1)));
 					++p;
 					if(i>0) {
 					if(j>0) {
