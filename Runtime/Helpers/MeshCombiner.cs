@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Pool;
 
 namespace YouSingStudio.MeshKit {
 
@@ -93,16 +92,6 @@ namespace YouSingStudio.MeshKit {
 			skinnedMeshRenderer.bones=bones;
 			//
 			return mesh;
-		}
-
-		public static void Remap<T>(ref T[] array,int count,IDictionary<int,int> remap) {
-			if(array!=null&&remap!=null) {
-				T[] tmp=new T[count];
-				for(int i=0;i<count;++i) {
-					tmp[i]=array[remap[i]];
-				}
-				array=tmp;
-			}
 		}
 
 		#endregion Statics
@@ -198,38 +187,10 @@ namespace YouSingStudio.MeshKit {
 			}
 		}
 
-		protected virtual void ReduceBones() {
-			if(skinnedMeshRenderer!=null) {
-				using(DictionaryPool<int,int>.Get(out var i2o)) {
-				using(DictionaryPool<int,int>.Get(out var o2i)) {
-				using(ListPool<Transform>.Get(out var list)) {
-					Mesh mesh=skinnedMeshRenderer.sharedMesh;
-					Transform[] bones=skinnedMeshRenderer.bones;
-					Matrix4x4[] bindposes=mesh.bindposes;
-					BoneWeight[] boneWeights=mesh.boneWeights;
-						int i=0,imax=bones?.Length??0;
-						for(int j;i<imax;++i) {
-							j=list.IndexOf(bones[i]);
-							if(j<0) {j=list.Count;list.Add(bones[i]);}
-							i2o[i]=j;o2i[j]=i;
-						}
-						imax=list.Count;
-						Remap(ref bones,imax,o2i);
-						Remap(ref bindposes,imax,o2i);
-						for(i=0,imax=boneWeights?.Length??0;i<imax;++i) {
-							BoneWeightHelper.SetBoneIndex(ref boneWeights[i],i2o);
-						}
-					skinnedMeshRenderer.bones=bones;
-					mesh.bindposes=bindposes;
-					mesh.boneWeights=boneWeights;
-				}}}
-			}
-		}
-
 		public override void Run() {
 			CombineRenderers(ref meshFilters,ref meshFilter,CombineTo);
 			CombineRenderers(ref skinnedMeshRenderers,ref skinnedMeshRenderer,CombineTo);
-			if(reduceBones) {ReduceBones();}
+			if(reduceBones) {skinnedMeshRenderer.ReduceBones();}
 			SetSubRenderersEnabled(false);
 		}
 

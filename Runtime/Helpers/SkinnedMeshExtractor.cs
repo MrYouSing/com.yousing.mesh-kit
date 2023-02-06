@@ -9,7 +9,11 @@ namespace YouSingStudio.MeshKit {
 		#region Fields
 
 		public Transform root;
+		public Transform parent;
+		public string[] paths;
 		public SkinnedMeshRenderer[] renderers;
+		public bool reduceBones;
+		public string[] reserveBones;
 
 		[System.NonSerialized]protected List<Transform> m_Bones=new List<Transform>();
 
@@ -18,7 +22,7 @@ namespace YouSingStudio.MeshKit {
 		#region Methods
 
 		public virtual void TryAdd(Transform t) {
-			if(m_Bones.IndexOf(t)<0) {
+			if(t!=null&&m_Bones.IndexOf(t)<0) {
 				m_Bones.Add(t);
 			}
 		}
@@ -31,25 +35,33 @@ namespace YouSingStudio.MeshKit {
 				if(m_Bones[i].IsChildOf(t)) {return;}
 			}
 			//
-#if UNITY_EDITOR
-			if(!UnityEditor.EditorApplication.isPlaying) {
-				GameObject.DestroyImmediate(t.gameObject);
-			}else
-#endif
-			GameObject.Destroy(t.gameObject);
+			t.gameObject.Destroy();
 		}
 
 		public override void Run() {
 			m_Bones.Clear();
+			if(root==null) {root=transform;}
+			//
+			if((paths?.Length??0)>0) {
+				renderers=System.Array.ConvertAll(paths,x=>root.FindEx(x).GetComponent<SkinnedMeshRenderer>());
+			}
+			Transform top=null,rb;
 			int i=0,imax=renderers?.Length??0;
 			SkinnedMeshRenderer it;for(;i<imax;++i) {
 				it=renderers[i];
 				if(it!=null) {
-					TryAdd(it.transform);TryAdd(it.rootBone);
+					if(reduceBones) {it.ReduceBones(Vector3.kEpsilon,reserveBones);}
+					TryAdd(it.transform);TryAdd(rb=it.rootBone);
 					System.Array.ForEach(it.bones,TryAdd);
+					if(top==null||rb.GetDepth()<top.GetDepth()) {top=rb;}
 				}
-			}
-			if(root==null) {root=transform;}
+			
+			if(parent!=null) {
+				parent.SetParent(top!=null?top:root,false);
+				parent.SetAsFirstSibling();
+				parent.localPosition=Vector3.zero;
+				parent.localRotation=Quaternion.identity;
+			}}
 			using(ListPool<Transform>.Get(out var list)) {
 				root.GetComponentsInChildren(true,list);
 				list.ForEach(TryDestroy);

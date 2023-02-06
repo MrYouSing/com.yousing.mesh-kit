@@ -16,7 +16,7 @@ namespace YouSingStudio.MeshKit {
 				//
 				if(target!=null) {
 					Renderer r=target.GetComponent<Renderer>();
-					if(r!=null) {r.sharedMaterials=new Material[]{r.sharedMaterial};}
+					if(r!=null) {r.sharedMaterials=new Material[]{r.sharedMaterials[submesh]};}
 				}
 			}
 			EndModifyMesh(mesh);
