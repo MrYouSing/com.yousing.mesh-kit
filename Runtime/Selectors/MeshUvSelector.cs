@@ -6,6 +6,7 @@ namespace YouSingStudio.MeshKit {
 	{
 		#region Fields
 
+		public bool strict;
 		public Texture2D texture;
 		public bool bilinear=true;
 		[Range(0.0f,1.0f)]
@@ -44,6 +45,12 @@ namespace YouSingStudio.MeshKit {
 
 		public override bool TestIndex(int index) {
 			return GetColor(uv[index]).a>cutoff;
+		}
+
+		public override bool TestTriangle(int a, int b, int c) {
+			bool ret=base.TestTriangle(a,b,c);
+			if(strict&&!ret) {ret=GetColor((uv[a]+uv[b]+uv[c])/3.0f).a>cutoff;}
+			return ret;
 		}
 
 		#endregion Methods

@@ -15,27 +15,35 @@ namespace YouSingStudio.MeshKit {
 
 		#region Methods
 
+		public virtual void InitSubModifier(SubMeshModifier modifier) {
+			if(modifier!=null) {
+				if(m_Renderer is MeshRenderer mr) {
+					modifier.AddMissingComponent<MeshRenderer>();
+				}else if(m_Renderer is SkinnedMeshRenderer smr) {
+					var sub=modifier.AddMissingComponent<SkinnedMeshRenderer>();
+					sub.localBounds=smr.localBounds;
+					sub.rootBone=smr.rootBone;
+					sub.bones=smr.bones;
+				}
+				modifier.runType=RunType.Manual;modifier.target=modifier.transform;
+			}
+		}
+
 		public virtual SubMeshModifier NewSubModifier(int index,SubMeshModifier modifier=null) {
 			if(modifier!=null&&!modifier.IsPrefab()) {
+				modifier.transform.SetAsLastSibling();
+				InitSubModifier(modifier);
 				return modifier;
 			}
-			Transform t=(target!=null&&index<target.childCount)?target.GetChild(index):null;
+			Transform t=null;
 			if(t==null) {
 				GameObject go=modifier!=null?modifier.gameObject:prefab;
 				go=go!=null?GameObject.Instantiate(go):new GameObject();
 				go.name=name+" ("+index+")";
 				t=go.transform;t.SetParent(target,false);
-				if(m_Renderer is MeshRenderer mr) {
-					t.AddMissingComponent<MeshRenderer>();
-				}else if(m_Renderer is SkinnedMeshRenderer smr) {
-					var sub=t.AddMissingComponent<SkinnedMeshRenderer>();
-					sub.localBounds=smr.localBounds;
-					sub.rootBone=smr.rootBone;
-					sub.bones=smr.bones;
-				}
 				if(true) {
 					var sub=t.AddMissingComponent<SubMeshModifier>();
-					sub.runType=RunType.Manual;sub.target=t;return sub;
+					InitSubModifier(sub);return sub;
 				}
 			}
 			return t.AddMissingComponent<SubMeshModifier>();

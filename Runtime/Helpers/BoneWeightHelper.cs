@@ -123,6 +123,10 @@ namespace YouSingStudio.MeshKit {
 				using(DictionaryPool<int,int>.Get(out var o2i)) {
 				using(ListPool<Transform>.Get(out var list)) {
 					Mesh mesh=thiz.sharedMesh;
+					if(mesh==null) {
+						Debug.LogWarning(thiz.name+".sharedMesh==null");
+						return;
+					}
 					Transform[] bones=thiz.bones;
 					Matrix4x4[] bindposes=mesh.bindposes;
 					BoneWeight[] boneWeights=mesh.boneWeights;
@@ -157,7 +161,6 @@ namespace YouSingStudio.MeshKit {
 					thiz.bones=bones;
 					mesh.bindposes=bindposes;
 					mesh.boneWeights=boneWeights;
-					mesh.Optimize();
 				}}}
 			}
 		}

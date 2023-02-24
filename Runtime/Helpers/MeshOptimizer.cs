@@ -1,5 +1,33 @@
-using System.Collections;
-using System.Collections.Generic;
+/* <!-- Macro.Table Mesh
+Clear,
+ClearBlendShapes,
+MarkDynamic,
+MarkModified,
+Optimize,
+OptimizeIndexBuffers,
+OptimizeReorderVertexBuffer,
+RecalculateBounds,
+RecalculateNormals,
+RecalculateTangents,
+RecalculateUVDistributionMetrics,
+UploadMeshData,
+ Macro.End --> */
+
+/* <!-- Macro.Call  Mesh
+			{0}=1<<$(Table.Row),
+ Macro.End --> */
+/* <!-- Macro.Patch
+,Mode
+ Macro.End --> */
+/* <!-- Macro.Call  Mesh
+				if((mode&Mode.{0})!=0) {{mesh.{0}();}}
+ Macro.End --> */
+/* <!-- Macro.Replace
+UploadMeshData(),UploadMeshData(markNoLongerReadable)
+ Macro.End --> */
+/* <!-- Macro.Patch
+,Run
+ Macro.End --> */
 using UnityEngine;
 
 namespace YouSingStudio.MeshKit {
@@ -10,18 +38,20 @@ namespace YouSingStudio.MeshKit {
 
 		[System.Flags]
 		public enum Mode {
-			 Clear                            = 0x0001
-			,ClearBlendShapes                 = 0x0002
-			,MarkDynamic                      = 0x0004
-			,MarkModified                     = 0x0008
-			,Optimize                         = 0x0010
-			,OptimizeIndexBuffers             = 0x0020
-			,OptimizeReorderVertexBuffer      = 0x0040
-			,RecalculateBounds                = 0x0100
-			,RecalculateNormals               = 0x0200
-			,RecalculateTangents              = 0x0400
-			,RecalculateUVDistributionMetrics = 0x0800
-			,UploadMeshData                   = 0x1000
+// <!-- Macro.Patch Mode
+			Clear=1<<0,
+			ClearBlendShapes=1<<1,
+			MarkDynamic=1<<2,
+			MarkModified=1<<3,
+			Optimize=1<<4,
+			OptimizeIndexBuffers=1<<5,
+			OptimizeReorderVertexBuffer=1<<6,
+			RecalculateBounds=1<<7,
+			RecalculateNormals=1<<8,
+			RecalculateTangents=1<<9,
+			RecalculateUVDistributionMetrics=1<<10,
+			UploadMeshData=1<<11,
+// Macro.Patch -->
 		}
 
 		#endregion Nested Types
@@ -39,7 +69,7 @@ namespace YouSingStudio.MeshKit {
 		public override void Run() {
 			Mesh mesh=s_Mesh!=null?s_Mesh:this.mesh;
 			if(mesh!=null) {
-				// ="if((mode&Mode."&A1&")!=0) {mesh."&A1&"();}"
+// <!-- Macro.Patch Run
 				if((mode&Mode.Clear)!=0) {mesh.Clear();}
 				if((mode&Mode.ClearBlendShapes)!=0) {mesh.ClearBlendShapes();}
 				if((mode&Mode.MarkDynamic)!=0) {mesh.MarkDynamic();}
@@ -52,6 +82,7 @@ namespace YouSingStudio.MeshKit {
 				if((mode&Mode.RecalculateTangents)!=0) {mesh.RecalculateTangents();}
 				if((mode&Mode.RecalculateUVDistributionMetrics)!=0) {mesh.RecalculateUVDistributionMetrics();}
 				if((mode&Mode.UploadMeshData)!=0) {mesh.UploadMeshData(markNoLongerReadable);}
+// Macro.Patch -->
 			}
 		}
 
