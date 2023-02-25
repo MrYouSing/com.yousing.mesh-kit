@@ -80,7 +80,8 @@ namespace YouSingStudio.MeshKit {
 					if(tmp!=null) {
 						if(func!=null) {int i=tmp.Length;while(i-->0) {tmp[i]=func(tmp[i]);}}
 						if(tmp.Length<data.Length) {Repeat(data,tmp);}
-					}else {data=tmp;}
+						else {data=tmp;}
+					}
 				}else{
 					using(GenericPool<StringBuilder>.Get(out var sb)) {
 						sb.Clear();sb.AppendLine(":[");

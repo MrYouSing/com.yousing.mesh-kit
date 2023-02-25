@@ -30,6 +30,26 @@ namespace YouSingStudio.MeshKit {
 			}
 		}
 
+#if UNITY_EDITOR
+		protected virtual void OnDrawGizmos()=>DrawGizmos(false);
+
+		protected virtual void OnDrawGizmosSelected()=>DrawGizmos(true);
+
+		protected virtual void DrawGizmos(bool selected) {
+			Color c=Gizmos.color;
+			Matrix4x4 m=Gizmos.matrix;
+				Gizmos.color=selected?Color.green:Color.gray;
+				Gizmos.matrix=transform.localToWorldMatrix;
+				InternalDrawGizmos(selected);
+			Gizmos.color=c;
+			Gizmos.matrix=m;
+		}
+
+		protected virtual void InternalDrawGizmos(bool selected) {
+			if(selected) {Gizmos.DrawMesh(mesh);}
+		}
+#endif
+
 		#endregion Unity Messages
 
 		#region Methods

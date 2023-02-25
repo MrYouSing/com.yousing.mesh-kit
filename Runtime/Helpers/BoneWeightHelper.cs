@@ -76,6 +76,20 @@ namespace YouSingStudio.MeshKit {
 
 		#region Methods
 
+		public static string ToString(this ref BoneWeight thiz,string format) {
+			using(GenericPool<System.Text.StringBuilder>.Get(out var sb)) {
+				sb.Clear();float f;
+				for(int i=0;i<4;++i) {
+					f=thiz.GetWeight(i);
+					if(f>0.0f) {
+						if(sb.Length>0) {sb.Append(",");}
+						sb.Append(thiz.GetBoneIndex(i)).Append(":").Append(f.ToString(format));
+					}
+				}
+				return sb.ToString();
+			}
+		}
+
 		public static void SetBoneIndex(ref BoneWeight thiz,IDictionary<int,int> m) {
 			if(m!=null) {
 				int i;

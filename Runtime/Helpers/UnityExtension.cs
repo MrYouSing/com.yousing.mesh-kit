@@ -397,6 +397,30 @@ namespace YouSingStudio.MeshKit {
 			);
 		}
 
+		public static void Clockwise(this Vector3[] thiz) {
+			if(thiz!=null) {
+				Vector3 o=Vector3.zero,x=Vector3.zero,y=Vector3.zero;
+				int i,imax=thiz?.Length??0;
+				if(imax>=3) {
+					for(i=0;i<imax;++i) {o+=thiz[i];}
+					o/=imax;i=0;x=(thiz[i]-o).normalized;
+					for(i=1;i<imax;++i) {
+						y=(thiz[i]-o).normalized;
+						if(Vector3.Dot(x,y)<=0.1f) {break;}
+					}
+					Vector3.OrthoNormalize(ref x,ref y);
+					System.Func<Vector3,float> func=(v)=>{
+						return Mathf.Repeat(Mathf.Atan2(
+							Vector3.Dot(v,y),Vector3.Dot(v,x)
+						)*Mathf.Rad2Deg,360.0f);
+					};
+					System.Array.Sort(thiz,(a,b)=>{
+						return System.Math.Sign(func(a-o)-func(b-o));
+					});
+				}
+			}
+		}
+
 		public static bool IsActiveAndEnabled(this Renderer thiz) {
 			if(thiz!=null) {
 				return thiz.gameObject.activeInHierarchy&&thiz.enabled;
