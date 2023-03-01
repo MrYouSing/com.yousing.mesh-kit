@@ -167,6 +167,9 @@ namespace YouSingStudio.MeshKit {
 							}
 						}
 						imax=list.Count;
+#if UNITY_EDITOR
+						Debug.LogFormat("ReduceBones:{0}->{1}",bones.Length,imax);
+#endif
 						Remap(ref bones,imax,o2i);
 						Remap(ref bindposes,imax,o2i);
 						for(i=0,imax=boneWeights?.Length??0;i<imax;++i) {

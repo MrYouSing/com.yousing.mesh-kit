@@ -85,6 +85,9 @@ namespace YouSingStudio.MeshKit {
 				points=list.ToArray();
 			}
 			points.Clockwise();
+#if UNITY_EDITOR
+			UnityEditor.EditorUtility.SetDirty(this);
+#endif
 		}
 
 		protected override void OnPreBuildMesh() {

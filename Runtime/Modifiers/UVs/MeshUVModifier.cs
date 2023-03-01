@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace YouSingStudio.MeshKit {
 
-	public class MeshUvModifier:MeshModifierBase {
+	public class MeshUVModifier:MeshModifierBase {
 
 		#region Fields
 
@@ -17,6 +17,16 @@ namespace YouSingStudio.MeshKit {
 		#endregion Fields
 
 		#region Methods
+
+		public static void Run(Transform root,Rect rect) {
+			if(root!=null) {
+				var uv=root.AddMissingComponent<MeshUVModifier>();
+				if(uv.mesh==null) {uv.mesh=root.GetSharedMesh();}
+				uv.offset=rect.position;uv.scale=rect.size;
+				uv.target=root;uv.runType=RunType.Manual;
+				uv.Run();
+			}
+		}
 
 		protected virtual void Prepare(ref Vector2 uv) {
 			switch(wrapMode) {

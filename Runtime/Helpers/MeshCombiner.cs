@@ -94,6 +94,20 @@ namespace YouSingStudio.MeshKit {
 			return mesh;
 		}
 
+		public static void Run(Transform root,Material material) {
+			if(root!=null) {
+				var mc=root.AddMissingComponent<MeshCombiner>();
+				mc.skinnedMeshRenderer=root.GetComponent<SkinnedMeshRenderer>();
+				mc.meshFilter=root.GetComponent<MeshFilter>();
+				if(material!=null) {
+					Renderer r=root.GetComponent<Renderer>();
+					if(r!=null) {r.sharedMaterial=material;}
+				}
+				mc.reduceBones=true;mc.runType=RunType.Manual;
+				mc.Run();
+			}
+		}
+
 		#endregion Statics
 
 		#region Fields
@@ -190,7 +204,12 @@ namespace YouSingStudio.MeshKit {
 		public override void Run() {
 			CombineRenderers(ref meshFilters,ref meshFilter,CombineTo);
 			CombineRenderers(ref skinnedMeshRenderers,ref skinnedMeshRenderer,CombineTo);
-			if(reduceBones) {skinnedMeshRenderer.ReduceBones();}
+			var smr=skinnedMeshRenderer;if(smr!=null) {
+				if(smr.localBounds.size.sqrMagnitude==0.0f) {
+					smr.SetBounds(skinnedMeshRenderers);
+				}
+				if(reduceBones) {smr.ReduceBones();}
+			}
 			SetSubRenderersEnabled(false);
 		}
 

@@ -11,6 +11,7 @@ IndexOutOfRangeException,System.IndexOutOfRangeException
 /* <!-- Macro.Patch
 ,AutoGen
  Macro.End --> */
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace YouSingStudio.MeshKit {
@@ -397,6 +398,33 @@ namespace YouSingStudio.MeshKit {
 			);
 		}
 
+		public static Bounds NewBounds()=>new Bounds(
+			new Vector3(float.NaN,float.NaN,float.NaN),
+			new Vector3(float.NaN,float.NaN,float.NaN)
+		);
+
+		public static void TryEncapsulate(this ref Bounds thiz,Vector3 point) {
+			if(float.IsNaN(thiz.center.x)) {thiz.center=point;thiz.extents=Vector3.zero;}
+			else {thiz.Encapsulate(point);}
+		}
+
+		public static void TryEncapsulate(this ref Bounds thiz,Bounds bounds) {
+			if(float.IsNaN(thiz.center.x)) {thiz=bounds;}
+			else {thiz.Encapsulate(bounds);}
+		}
+
+		public static void GetPoints(this Bounds thiz,Vector3[] points,Matrix4x4 matrix) {
+			int i=0;Vector3 c=thiz.center,e=thiz.extents;
+			points[i]=matrix.MultiplyPoint3x4(c+new Vector3(-e.x,-e.y,-e.z));++i;
+			points[i]=matrix.MultiplyPoint3x4(c+new Vector3(-e.x,-e.y, e.z));++i;
+			points[i]=matrix.MultiplyPoint3x4(c+new Vector3(-e.x, e.y,-e.z));++i;
+			points[i]=matrix.MultiplyPoint3x4(c+new Vector3(-e.x, e.y, e.z));++i;
+			points[i]=matrix.MultiplyPoint3x4(c+new Vector3( e.x,-e.y,-e.z));++i;
+			points[i]=matrix.MultiplyPoint3x4(c+new Vector3( e.x,-e.y, e.z));++i;
+			points[i]=matrix.MultiplyPoint3x4(c+new Vector3( e.x, e.y,-e.z));++i;
+			points[i]=matrix.MultiplyPoint3x4(c+new Vector3( e.x, e.y, e.z));++i;
+		}
+
 		public static void Clockwise(this Vector3[] thiz) {
 			if(thiz!=null) {
 				Vector3 o=Vector3.zero,x=Vector3.zero,y=Vector3.zero;
@@ -558,6 +586,39 @@ namespace YouSingStudio.MeshKit {
 			int i=-1;
 			while(thiz!=null) {++i;thiz=thiz.parent;}
 			return i;
+		}
+
+		public static Matrix4x4 GetLocalToWorldMatrix(this Renderer thiz,Transform root) {
+			if(root!=null) {return root.localToWorldMatrix;}
+			if(thiz!=null) {return thiz.localToWorldMatrix;}
+			return Matrix4x4.identity;
+		}
+
+		public static Matrix4x4 GetLocalToWorldMatrix(this SkinnedMeshRenderer thiz)=>
+			thiz!=null?thiz.GetLocalToWorldMatrix(thiz.rootBone):Matrix4x4.identity;
+
+		public static void SetBounds(this SkinnedMeshRenderer thiz,IEnumerable<SkinnedMeshRenderer> others) {
+			if(thiz!=null&&others!=null) {
+				Bounds bounds=NewBounds();
+				Matrix4x4 matrix=thiz.GetLocalToWorldMatrix(),m;
+				Vector3[] points=new Vector3[8];
+				foreach(var it in others) {
+					if(it!=null) {
+						m=it.GetLocalToWorldMatrix();
+						if(matrix!=m) {
+							Debug.LogWarning($"{thiz.name}.localToWorldMatrix!={it.name}.localToWorldMatrix");
+							it.localBounds.GetPoints(points,matrix*m);
+							for(int i=0,imax=points.Length;i<imax;++i) {
+								bounds.TryEncapsulate(points[i]);
+							}
+						}else {
+							bounds.TryEncapsulate(it.localBounds);
+						}
+					}
+				}
+				if(float.IsNaN(bounds.center.x)) {bounds=new Bounds();}
+				thiz.localBounds=bounds;
+			}
 		}
 
 		#endregion Methods
