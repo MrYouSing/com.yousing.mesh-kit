@@ -449,6 +449,13 @@ namespace YouSingStudio.MeshKit {
 			}
 		}
 
+		public static bool IsActiveAndEnabled(this Behaviour thiz) {
+			if(thiz!=null) {
+				return thiz.gameObject.activeSelf&&thiz.enabled;
+			}
+			return false;
+		}
+
 		public static bool IsActiveAndEnabled(this Renderer thiz) {
 			if(thiz!=null) {
 				return thiz.gameObject.activeInHierarchy&&thiz.enabled;

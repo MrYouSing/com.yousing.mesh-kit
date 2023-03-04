@@ -29,6 +29,7 @@ namespace YouSingStudio.MeshKit {
 			mesh.CombineMeshes(combines.ToArray());
 			//
 			combines.Clear();
+			// TODO: Missing blend shapes????
 			return mesh;
 		}
 
@@ -101,7 +102,7 @@ namespace YouSingStudio.MeshKit {
 				mc.meshFilter=root.GetComponent<MeshFilter>();
 				if(material!=null) {
 					Renderer r=root.GetComponent<Renderer>();
-					if(r!=null) {r.sharedMaterial=material;}
+					if(r!=null) {r.sharedMaterials=new Material[]{material};}
 				}
 				mc.reduceBones=true;mc.runType=RunType.Manual;
 				mc.Run();

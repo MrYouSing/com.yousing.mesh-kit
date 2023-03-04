@@ -146,7 +146,7 @@ namespace YouSingStudio.MeshKit {
 					BoneWeight[] boneWeights=mesh.boneWeights;
 					int i,imax=bones?.Length??0,j;
 						if(threshold>=0.0f) {
-							float[] weights=new float[bindposes.Length];
+							float[] weights=new float[imax];
 							GetWeights(boneWeights,weights,mesh.triangles);
 							for(i=0;i<imax;++i) {
 								if(weights[i]<threshold&&

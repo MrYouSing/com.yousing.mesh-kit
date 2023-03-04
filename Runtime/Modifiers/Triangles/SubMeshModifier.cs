@@ -7,6 +7,7 @@ namespace YouSingStudio.MeshKit {
 		#region Fields
 
 		public bool optimize=true;
+		public bool rename=true;
 
 		#endregion Fields
 
@@ -17,6 +18,7 @@ namespace YouSingStudio.MeshKit {
 			if(mesh!=null) {
 				mesh.triangles=mesh.GetTriangles(submesh);
 				if(optimize) {mesh.Optimize();}
+				if(rename) {mesh.name=name;}
 				//
 				if(target!=null) {
 					Renderer r=target.GetComponent<Renderer>();

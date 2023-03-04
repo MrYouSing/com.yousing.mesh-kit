@@ -12,6 +12,7 @@ namespace YouSingStudio.MeshKit {
 		public static bool s_Linear;
 		public static Dictionary s_Canvases=
 			new Dictionary(System.StringComparer.OrdinalIgnoreCase);
+		public static Texture2D s_Temp;
 
 		#endregion Fields
 
@@ -48,6 +49,16 @@ namespace YouSingStudio.MeshKit {
 			return new Texture2D(width,height,TextureFormat.RGBA32,false,s_Linear);
 		}
 
+		public static Texture2D TempTexture2D(int width,int height) {
+			if(s_Temp==null) {s_Temp=NewTexture2D(width,height);}
+			else {s_Temp.Reinitialize(width,height);}
+			return s_Temp;
+		}
+
+		public static Texture2D TempTexture2D(Texture texture) {
+			return texture!=null?TempTexture2D(texture.width,texture.height):null;
+		}
+
 		public static Texture2D LoadTexture(Texture2D texture) {
 			if(texture!=null) {
 #if UNITY_EDITOR
@@ -80,6 +91,12 @@ namespace YouSingStudio.MeshKit {
 			}
 			return texture;
 		}
+
+		public static void ReadPixels(Texture2D texture) {
+			if(texture!=null) {
+				texture.ReadPixels(new Rect(0,0,texture.width,texture.height),0,0);
+			}
+		}
 		
 		public abstract void Begin(int width,int height,Color color);
 		public abstract void DrawTexture(Rect rect,Texture texture);
@@ -103,7 +120,14 @@ namespace YouSingStudio.MeshKit {
 		}
 
 		public override void DrawTexture(Rect rect,Texture texture) {
-			if(texture is Texture2D t) {
+			Texture2D t=null;
+			if(texture is RenderTexture rt) {
+				t=TempTexture2D(rt);
+				var tmp=RenderTexture.active;RenderTexture.active=rt;
+					ReadPixels(t);
+				RenderTexture.active=tmp;
+			}else {t=texture as Texture2D;}
+			if(t!=null) {
 				if(IsNormalized(rect.size)) {
 					rect.x*=thiz.width;rect.y*=thiz.height;
 				}
@@ -177,11 +201,9 @@ namespace YouSingStudio.MeshKit {
 		}
 
 		public override Texture2D SaveTexture(string path) {
-			int w=thiz.width,h=thiz.height;
-			Texture2D tmp=NewTexture2D(w,h);
-			Push();tmp.ReadPixels(new Rect(0,0,w,h),0,0);Pop();
+			Texture2D tmp=TempTexture2D(thiz);
+			Push();Texture2DCanvas.ReadPixels(tmp);Pop();
 			Texture2D ret=SaveTexture(path,tmp);
-			if(ret!=tmp) {Destroy(tmp);}
 			return ret;
 		}
 

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Pool;
 
 namespace YouSingStudio.MeshKit {
 	/// <summary>
@@ -8,7 +9,7 @@ namespace YouSingStudio.MeshKit {
 	/// <seealso cref="Texture2D.PackTextures(Texture2D[],int,int,bool)"/>
 	/// </summary>
 	public class ModelPacker
-		:MonoBehaviour
+		:MonoTask
 	{
 		#region Nested Types
 
@@ -17,6 +18,7 @@ namespace YouSingStudio.MeshKit {
 			public string name;
 			public Transform root;
 			public Material material;
+			public string baseMap;
 			[Header("Packer")]
 			public Texture2D texture;
 			public int maximum;
@@ -25,10 +27,18 @@ namespace YouSingStudio.MeshKit {
 			public string[] variants;
 
 			[System.NonSerialized]public Vector2 size;
+			[System.NonSerialized]protected int m_BaseMap;
 
 			public virtual int IndexOf(Material material) {
 				if(material!=null&&textures!=null) {
-					return System.Array.IndexOf(textures,material.mainTexture);
+					Texture t=m_BaseMap!=0?material.GetTexture(m_BaseMap):material.mainTexture,it;
+					if(t!=null) {
+						string s=t.name;
+						for(int i=0,imax=textures?.Length??0;i<imax;++i) {
+							it=textures[i];
+							if(it!=null&&(it==t||it.name==s)) {return i;}
+						}
+					}
 				}
 				return -1;
 			}
@@ -57,6 +67,7 @@ namespace YouSingStudio.MeshKit {
 			}
 
 			public virtual void Run(Material material) {
+				if(material==null) {return;}
 				int i=IndexOf(material);
 				if(i>=0) {
 					Texture2D it;
@@ -76,9 +87,13 @@ namespace YouSingStudio.MeshKit {
 			}
 
 			public virtual void Run(Renderer renderer) {
+				if(renderer==null) {return;}
 				int i=IndexOf(renderer.sharedMaterial);
 				if(i>=0) {
 					MeshUVModifier.Run(renderer.transform,rects[i]);
+					if(current!=null&&current.export) {
+						current.unexports.Add(renderer.transform);
+					}
 				}
 			}
 
@@ -90,6 +105,7 @@ namespace YouSingStudio.MeshKit {
 
 			public virtual void Run() {
 				if(texture==null) {return;}
+				m_BaseMap=!string.IsNullOrEmpty(baseMap)?Shader.PropertyToID(baseMap):0;
 				Rect[] tmp=rects;
 					Bake();size=new Vector2(texture.width,texture.height);
 					Run(current.materials);Run(current.renderers);
@@ -105,11 +121,16 @@ namespace YouSingStudio.MeshKit {
 
 		public bool linear;
 		public string canvas=nameof(Texture2D);
+		public bool export;
 		public Renderer[] renderers;
 		public Material[] materials;
 		public Group[] groups;
 		[System.NonSerialized]public Dictionary<string,TextureCanvas> canvases=
 			new Dictionary<string,TextureCanvas>();
+		[System.NonSerialized]public List<Transform> unexports=
+			new List<Transform>();
+
+		[System.NonSerialized]protected int m_Index=-1;
 
 		#endregion Fields
 
@@ -121,6 +142,7 @@ namespace YouSingStudio.MeshKit {
 		}
 
 		protected virtual void End() {
+			unexports.ForEach(Detach);unexports.Clear();
 #if UNITY_EDITOR
 			UnityEditor.EditorUtility.SetDirty(this);
 #endif
@@ -137,13 +159,41 @@ namespace YouSingStudio.MeshKit {
 			End();
 		}
 
-		[ContextMenu("Run")]
-		public virtual void Run() {
+		public override void Run() {
+			if((renderers?.Length??0)==0) {
+				renderers=GetComponentsInChildren<Renderer>(false);
+			}
 			Begin();
 			for(int i=0,imax=groups?.Length??0;i<imax;++i) {
 				groups[i].Run();
 			}
 			End();
+		}
+
+		public virtual void Prepare(string key) {
+			if(!this.IsActiveAndEnabled()) {return;}
+			if(!string.IsNullOrEmpty(key)) {
+				m_Index=System.Array.FindIndex(groups,x=>x.name==key);
+			}else {
+				m_Index=-1;
+			}
+		}
+
+		public virtual void Run(Transform root) {
+			if(!this.IsActiveAndEnabled()||root==null||m_Index<0) {return;}
+			ModelPacker thiz=this;
+			if(gameObject.IsPrefab()) {thiz=Object.Instantiate(thiz);}
+			if(m_Index>=0) {thiz.groups[m_Index].root=root;}
+			using(ListPool<Renderer>.Get(out var list)) {
+				root.GetComponentsInChildren(true,list);
+				list.RemoveAll((x)=>!x.IsActiveAndEnabled()||x.transform==root);
+				thiz.renderers=list.ToArray();
+			}
+			thiz.Run();Prepare(null);
+		}
+
+		public virtual void Detach(Component comp) {
+			if(comp!=null) {comp.transform.SetParent(null,false);}
 		}
 
 		public virtual void AddVariant(Group group,string variant,Rect rect,Texture2D texture) {

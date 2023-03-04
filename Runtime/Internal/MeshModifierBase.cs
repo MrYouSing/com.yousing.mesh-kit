@@ -11,6 +11,7 @@ namespace YouSingStudio.MeshKit {
 		public Transform target;
 		public Mesh mesh;
 		public int submesh=-1;
+		public TextAsset text;
 		public bool useClone=true;
 		public bool autoApply=true;
 		public MeshEvent onApply=new MeshEvent();
@@ -32,6 +33,27 @@ namespace YouSingStudio.MeshKit {
 					hs.Add(t);
 					action(t);
 				}
+			}
+		}
+
+#if UNITY_EDITOR
+		[ContextMenu("Bake")]
+		protected virtual void Bake() {
+			Renderer r=GetComponentInChildren<Renderer>();
+			if(r==null) {r=GetComponentInParent<Renderer>();}
+			target=r!=null?r.transform:transform;
+			mesh=target.GetSharedMesh();
+			UnityEditor.EditorUtility.SetDirty(this);
+		}
+#endif
+
+		protected virtual void LoadJson(string key) {
+			if(text!=null) {
+				Newtonsoft.Json.UnityObjectConverter.transform=transform;
+					var all=Newtonsoft.Json.Linq.JObject.Parse(text.text);
+					var it=all[key];//if(it==null) {it=all[name];}
+					if(it!=null) {Newtonsoft.Json.JsonConvert.PopulateObject(it.ToString(),this);}
+				Newtonsoft.Json.UnityObjectConverter.transform=null;
 			}
 		}
 

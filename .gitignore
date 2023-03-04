@@ -34,3 +34,6 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+/Runtime/Plugins
+/Runtime/Plugins.meta

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Pool;
 
 namespace YouSingStudio.MeshKit {
@@ -14,6 +15,7 @@ namespace YouSingStudio.MeshKit {
 		public SkinnedMeshRenderer[] renderers;
 		public bool reduceBones;
 		public string[] reserveBones;
+		public UnityEvent onFinished=null;
 
 		[System.NonSerialized]protected List<Transform> m_Bones=new List<Transform>();
 
@@ -66,6 +68,7 @@ namespace YouSingStudio.MeshKit {
 				root.GetComponentsInChildren(true,list);
 				list.ForEach(TryDestroy);
 			}
+			onFinished?.Invoke();
 		}
 
 		#endregion Methods

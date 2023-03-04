@@ -77,7 +77,7 @@ namespace YouSingStudio.MeshKit {
 			if(mesh!=null) {
 				if(autoApply) {
 					if(m_Renderer!=null) {
-						m_Renderer.enabled=false;m_Renderer.SetSharedMesh(null);// TODO Destroy????
+						m_Renderer.enabled=false;m_Renderer.SetSharedMesh(null);
 					}
 				}
 				onApply?.Invoke(mesh);
