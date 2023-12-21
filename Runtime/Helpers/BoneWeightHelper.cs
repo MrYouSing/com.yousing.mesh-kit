@@ -182,6 +182,15 @@ namespace YouSingStudio.MeshKit {
 			}
 		}
 
+		public static void RemapBones(this SkinnedMeshRenderer thiz,Transform src,Transform dst) {
+			thiz.rootBone=thiz.rootBone.RemapTransform(src,dst);
+			var bones=thiz.bones;
+			for(int i=0,imax=bones?.Length??0;i<imax;++i) {
+				bones[i]=bones[i].RemapTransform(src,dst);
+			}
+			thiz.bones=bones;
+		}
+
 		#endregion Methods
 	}
 }

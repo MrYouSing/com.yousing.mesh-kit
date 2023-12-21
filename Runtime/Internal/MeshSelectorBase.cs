@@ -29,7 +29,8 @@ namespace YouSingStudio.MeshKit {
 	{
 		#region Fields
 
-		public bool all;
+		[UnityEngine.Serialization.FormerlySerializedAs("all")]
+		public bool triangular;
 
 		#endregion Fields
 
@@ -53,7 +54,7 @@ namespace YouSingStudio.MeshKit {
 
 		public virtual bool TestTriangle(int a,int b,int c) {
 			int i=TestFunc(TestIndex,a,b,c);
-			return all?(i==3):(i>=1);
+			return triangular?(i==3):(i>=1);
 		}
 
 		public virtual List<int> SelectTriangles(Mesh mesh,IList<int> triangles,List<int> result=null) {

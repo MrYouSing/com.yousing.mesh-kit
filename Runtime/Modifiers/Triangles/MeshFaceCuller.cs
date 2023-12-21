@@ -3,7 +3,7 @@ using UnityEngine.Rendering;
 
 namespace YouSingStudio.MeshKit {
 	public class MeshFaceCuller
-		:MeshCullerBase
+		:MeshCullerBase_ByVertex
 	{
 		#region Fields
 

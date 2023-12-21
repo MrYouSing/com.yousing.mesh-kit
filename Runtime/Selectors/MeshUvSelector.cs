@@ -9,6 +9,7 @@ namespace YouSingStudio.MeshKit {
 		public bool strict;
 		public Texture2D texture;
 		public bool bilinear=true;
+		public int channel=3;
 		[Range(0.0f,1.0f)]
 		public float cutoff=0.5f;
 		[System.NonSerialized]public Vector2[] uv;
@@ -44,7 +45,7 @@ namespace YouSingStudio.MeshKit {
 		}
 
 		public override bool TestIndex(int index) {
-			return GetColor(uv[index]).a>cutoff;
+			return GetColor(uv[index])[channel]>cutoff;
 		}
 
 		public override bool TestTriangle(int a, int b, int c) {

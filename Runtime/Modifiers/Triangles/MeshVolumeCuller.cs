@@ -26,7 +26,7 @@ using UnityEngine;
 
 namespace YouSingStudio.MeshKit {
 	public class MeshVolumeCuller
-		:MeshCullerBase
+		:MeshCullerBase_ByVertex
 	{
 		#region Fields
 

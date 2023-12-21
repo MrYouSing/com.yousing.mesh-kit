@@ -7,6 +7,6 @@
     "keywords": ["3d"],
     "category": "3D",
     "dependencies": {
-        "com.unity.nuget.newtonsoft-json": "2.0.0"
+        "com.unity.nuget.newtonsoft-json": "3.1.0"
     }
 }

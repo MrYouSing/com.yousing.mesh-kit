@@ -449,6 +449,15 @@ namespace YouSingStudio.MeshKit {
 			}
 		}
 
+		public static GameObject GetInstance(this GameObject thiz) {
+			if(thiz!=null&&!thiz.scene.IsValid()) {
+				string s=thiz.name;
+				thiz=GameObject.Instantiate(thiz);
+				thiz.name=s;
+			}
+			return thiz;
+		}
+
 		public static bool IsActiveAndEnabled(this Behaviour thiz) {
 			if(thiz!=null) {
 				return thiz.gameObject.activeSelf&&thiz.enabled;
@@ -626,6 +635,23 @@ namespace YouSingStudio.MeshKit {
 				if(float.IsNaN(bounds.center.x)) {bounds=new Bounds();}
 				thiz.localBounds=bounds;
 			}
+		}
+
+		public static Transform RemapTransform(this Transform thiz,Transform src,Transform dst) {
+			Transform tmp=thiz;
+			using(UnityEngine.Pool.ListPool<string>.Get(out var list)) {
+				while(tmp!=null&&tmp!=src) {
+					list.Add(tmp.name);
+					tmp=tmp.parent;
+				}
+				tmp=dst;
+				for(int i=0,imax=list.Count;i<imax;++i) {
+					if(tmp==null) {break;}
+					tmp=tmp.Find(list[imax-1-i]);
+				}
+			}
+			if(tmp==null) {Debug.LogWarning(thiz.name+" is missed.");}
+			return tmp;
 		}
 
 		#endregion Methods
