@@ -57,6 +57,17 @@ namespace YouSingStudio.MeshKit {
 				dest.sharedMesh=mesh;
 			}
 		}
+
+		public static Mesh GetInstancedMesh(this GameObject thiz,int searchDir=0) {
+			MeshFilter mf=null;
+			SkinnedMeshRenderer smr=null;
+			Mesh mesh=GetSharedMesh(thiz,ref mf,ref smr,searchDir);
+			if(smr!=null&&mesh!=null) {
+			if(mesh.name.IndexOf("(Clone)")<0) {
+				mesh=Mesh.Instantiate(mesh);smr.BakeMesh(mesh,false);
+			}}
+			return mesh;
+		}
 		public static Mesh GetSharedMesh(this Component thiz,ref MeshFilter mf,ref SkinnedMeshRenderer smr,int searchDir=0) {
 			Mesh mesh=null;
 			//
@@ -108,6 +119,17 @@ namespace YouSingStudio.MeshKit {
 				}
 				dest.sharedMesh=mesh;
 			}
+		}
+
+		public static Mesh GetInstancedMesh(this Component thiz,int searchDir=0) {
+			MeshFilter mf=null;
+			SkinnedMeshRenderer smr=null;
+			Mesh mesh=GetSharedMesh(thiz,ref mf,ref smr,searchDir);
+			if(smr!=null&&mesh!=null) {
+			if(mesh.name.IndexOf("(Clone)")<0) {
+				mesh=Mesh.Instantiate(mesh);smr.BakeMesh(mesh,false);
+			}}
+			return mesh;
 		}
 
 		public static Vector2[] GetUVs(this Mesh thiz,int channel) {

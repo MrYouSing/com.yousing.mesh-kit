@@ -186,6 +186,7 @@ namespace YouSingStudio.MeshKit {
 				}
 			}
 			if(imax>0) {
+				if(destination==null) {destination=this.AddMissingComponent<T>();}
 				if(fixTransforms) {
 					Transform t=destination.transform;
 					T it;
@@ -196,7 +197,6 @@ namespace YouSingStudio.MeshKit {
 						}
 					}
 				}
-				if(destination==null) {destination=this.AddMissingComponent<T>();}
 				if(func!=null) {mesh=func(source,destination);}
 				MonoTask.Run(task,mesh);
 			}

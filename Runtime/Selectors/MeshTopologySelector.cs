@@ -8,6 +8,7 @@ namespace YouSingStudio.MeshKit {
 		#region Fields
 
 		public int[] indexes;
+		[System.NonSerialized]public bool fastMode;
 		[System.NonSerialized]public List<HashSet<int>> shapes=new List<HashSet<int>>();
 
 		#endregion Fields
@@ -68,11 +69,11 @@ namespace YouSingStudio.MeshKit {
 			}
 			int cnt;
 			do{cnt=shapes.Count;Trim(shapes);}
-			while(cnt==shapes.Count);
+			while(cnt!=shapes.Count);
 		}
 
 		public override List<int> SelectVertices(Mesh mesh,IList<int> triangles,List<int> result = null) {
-			Bake(shapes,triangles);
+			if(!fastMode) {Bake(shapes,triangles);}
 			if(result==null) {result=new List<int>(triangles.Count);}
 			HashSet<int> it;for(int i=0,imax=indexes?.Length??0;i<imax;++i) {
 				it=Get(shapes,indexes[i]);

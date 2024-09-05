@@ -57,13 +57,13 @@ namespace YouSingStudio.MeshKit {
 					System.Array.ForEach(it.bones,TryAdd);
 					if(top==null||rb.GetDepth()<top.GetDepth()) {top=rb;}
 				}
-			
+			}
 			if(parent!=null) {
 				parent.SetParent(top!=null?top:root,false);
 				parent.SetAsFirstSibling();
 				parent.localPosition=Vector3.zero;
 				parent.localRotation=Quaternion.identity;
-			}}
+			}
 			using(ListPool<Transform>.Get(out var list)) {
 				root.GetComponentsInChildren(true,list);
 				list.ForEach(TryDestroy);

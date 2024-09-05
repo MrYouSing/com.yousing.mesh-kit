@@ -46,12 +46,8 @@ namespace YouSingStudio.MeshKit {
 		public override void Run() {
 			//
 			if(other==null) {
-				SkinnedMeshRenderer smr=null;MeshFilter mf=null;
-				other=reference.GetSharedMesh(ref mf,ref smr);
+				other=reference.GetInstancedMesh();
 				if(other==null) {return;}
-				if(smr!=null&&other.name.IndexOf("(Clone)")<0) {
-					other=Instantiate(other);smr.BakeMesh(other);
-				}
 			}
 			//
 			m_Count=0;

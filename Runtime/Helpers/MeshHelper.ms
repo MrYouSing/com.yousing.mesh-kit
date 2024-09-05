@@ -59,6 +59,17 @@ namespace YouSingStudio.MeshKit {
 				dest.sharedMesh=mesh;
 			}}
 		}}
+
+		public static Mesh GetInstancedMesh(this {0} thiz,int searchDir=0) {{
+			MeshFilter mf=null;
+			SkinnedMeshRenderer smr=null;
+			Mesh mesh=GetSharedMesh(thiz,ref mf,ref smr,searchDir);
+			if(smr!=null&&mesh!=null) {{
+			if(mesh.name.IndexOf("(Clone)")<0) {{
+				mesh=Mesh.Instantiate(mesh);smr.BakeMesh(mesh,false);
+			}}}}
+			return mesh;
+		}}
  Macro.End --> */
 
 /* <!-- Macro.Call Declare

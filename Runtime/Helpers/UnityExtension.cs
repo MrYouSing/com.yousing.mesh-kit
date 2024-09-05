@@ -604,6 +604,18 @@ namespace YouSingStudio.MeshKit {
 			return i;
 		}
 
+		public static Transform FindOrCreate(this Transform thiz,string path) {
+			if(thiz!=null&&!string.IsNullOrEmpty(path)) {
+				Transform tmp=thiz.Find(path);
+				if(tmp==null) {
+					tmp=new GameObject(path).transform;
+					tmp.SetParent(thiz,false);
+				}
+				thiz=tmp;
+			}
+			return thiz;
+		}
+
 		public static Matrix4x4 GetLocalToWorldMatrix(this Renderer thiz,Transform root) {
 			if(root!=null) {return root.localToWorldMatrix;}
 			if(thiz!=null) {return thiz.localToWorldMatrix;}
@@ -718,6 +730,22 @@ namespace YouSingStudio.MeshKit {
 				thiz=thiz.parent;
 			}
 			return path;
+		}
+
+		public static void SendMessageEx(this GameObject thiz,string message) {
+			if(thiz!=null&&!string.IsNullOrEmpty(message)) {
+				int i=message.LastIndexOf(',');
+				if(i>=0) {
+					System.Type type=System.Type.GetType(message.Substring(0,i));
+					if(type==null) {return;}
+					var method=type.GetMethod(message.Substring(i+1));
+					var tmp=thiz.GetComponent(type);
+					if(method==null||tmp==null) {return;}
+					method.Invoke(tmp,System.Type.EmptyTypes);
+					return;
+				}
+				thiz.SendMessage(message,SendMessageOptions.DontRequireReceiver);
+			}
 		}
 
 		#endregion Experimentals
