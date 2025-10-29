@@ -30,6 +30,7 @@ namespace YouSingStudio.MeshKit {
 	{
 		#region Fields
 
+		public MeshSelectorBase ignore;
 		public bool value=true;
 // <!-- Macro.Patch Fields
 		public Transform[] boxes=new Transform[0];
@@ -72,6 +73,7 @@ namespace YouSingStudio.MeshKit {
 
 		public override bool CullTest(Vector3 p0,Vector3 p1,Vector3 p2) {
 			Transform t;
+			if(ignore!=null&&ignore.TestTriangle(p0,p1,p2)) {return !value;}
 // <!-- Macro.Patch Test
 			if(ForEach(boxes,p0,p1,p2,BoxTest)) {return value;}
 			if(ForEach(capsules,p0,p1,p2,CapsuleTest)) {return value;}

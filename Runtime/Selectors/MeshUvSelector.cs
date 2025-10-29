@@ -50,7 +50,7 @@ namespace YouSingStudio.MeshKit {
 
 		public override bool TestTriangle(int a, int b, int c) {
 			bool ret=base.TestTriangle(a,b,c);
-			if(strict&&!ret) {ret=GetColor((uv[a]+uv[b]+uv[c])/3.0f).a>cutoff;}
+			if(strict&&!ret) {ret=GetColor((uv[a]+uv[b]+uv[c])/3.0f)[channel]>cutoff;}
 			return ret;
 		}
 

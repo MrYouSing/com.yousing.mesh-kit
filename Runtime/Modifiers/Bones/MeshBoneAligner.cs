@@ -9,9 +9,10 @@ namespace YouSingStudio.MeshKit {
 	{
 		#region Fields
 
-		public SkinnedMeshRenderer[] renderers;
+		public int mask=3;
 		public Transform[] sources;
 		public Transform[] destinations;
+		public SkinnedMeshRenderer[] renderers;
 
 		#endregion Fields
 
@@ -29,7 +30,7 @@ namespace YouSingStudio.MeshKit {
 			mesh.bindposes=bindposes;
 		}
 
-		public static void  Align(Transform src,Transform dst) {
+		public static void Align(Transform src,Transform dst,int mask) {
 			if(src!=null) {if(dst!=null) {dst.SetParent(null,true);}
 			using(ListPool<Transform>.Get(out var list)) {
 				int i,imax;Transform it;
@@ -37,7 +38,8 @@ namespace YouSingStudio.MeshKit {
 					it=src.GetChild(0);
 					if(it!=null) {it.SetParent(null,true);list.Add(it);}
 				}
-				src.rotation=(dst!=null)?dst.rotation:Quaternion.identity;
+				if((mask&0x1)!=0) {src.position=(dst!=null)?dst.position:Vector3.zero;}
+				if((mask&0x2)!=0) {src.rotation=(dst!=null)?dst.rotation:Quaternion.identity;}
 				for(i=0,imax=list.Count;i<imax;++i) {
 					list[i].SetParent(src,true);
 				}
@@ -53,7 +55,7 @@ namespace YouSingStudio.MeshKit {
 
 		public override void Run() {
 			int i,imax;
-			for(i=0,imax=sources?.Length??0;i<imax;++i) {Align(sources[i],destinations[i]);}
+			for(i=0,imax=sources?.Length??0;i<imax;++i) {Align(sources[i],destinations[i],mask);}
 			for(i=0,imax=renderers?.Length??0;i<imax;++i) {Align(renderers[i]);}
 		}
 

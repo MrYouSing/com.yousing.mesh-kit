@@ -46,6 +46,7 @@ namespace YouSingStudio.MeshKit {
 	{
 		#region Fields
 
+		public TextAsset text;
 		[Range(0.0f,100.0f)]
 		public float quality=100.0f;
 		[Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.UnityObjectConverter))]
@@ -157,6 +158,16 @@ namespace YouSingStudio.MeshKit {
 			Begin(triangles);
 				Get(value,ref triangles);
 			End();
+		}
+
+		protected virtual void LoadJson(string key) {
+			if(text!=null) {
+				Newtonsoft.Json.UnityObjectConverter.transform=transform;
+					var all=Newtonsoft.Json.Linq.JObject.Parse(text.text);
+					var it=all[key];//if(it==null) {it=all[name];}
+					if(it!=null) {Newtonsoft.Json.JsonConvert.PopulateObject(it.ToString(),this);}
+				Newtonsoft.Json.UnityObjectConverter.transform=null;
+			}
 		}
 
 		public override void Run() {

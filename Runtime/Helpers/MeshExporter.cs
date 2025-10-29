@@ -24,7 +24,7 @@ namespace YouSingStudio.MeshKit {
 					path=AssetDatabase.GetAssetPath(destination);
 				}
 			}
-			Mesh mesh=source as Mesh;
+			Mesh mesh=s_Mesh!=null?s_Mesh:(source as Mesh);
 			if(mesh==null) {
 				GameObject go=source as GameObject;
 				if(go==null) {return;}

@@ -11,7 +11,6 @@ namespace YouSingStudio.MeshKit {
 		public Transform target;
 		public Mesh mesh;
 		public int submesh=-1;
-		public TextAsset text;
 		public bool useClone=true;
 		public bool autoApply=true;
 		public MeshEvent onApply=new MeshEvent();
@@ -46,16 +45,6 @@ namespace YouSingStudio.MeshKit {
 			UnityEditor.EditorUtility.SetDirty(this);
 		}
 #endif
-
-		protected virtual void LoadJson(string key) {
-			if(text!=null) {
-				Newtonsoft.Json.UnityObjectConverter.transform=transform;
-					var all=Newtonsoft.Json.Linq.JObject.Parse(text.text);
-					var it=all[key];//if(it==null) {it=all[name];}
-					if(it!=null) {Newtonsoft.Json.JsonConvert.PopulateObject(it.ToString(),this);}
-				Newtonsoft.Json.UnityObjectConverter.transform=null;
-			}
-		}
 
 		public override void Run() {
 			Mesh mesh=BeginModifyMesh();

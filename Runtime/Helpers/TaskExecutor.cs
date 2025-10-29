@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace YouSingStudio.MeshKit {
 	public class TaskExecutor
@@ -9,6 +10,8 @@ namespace YouSingStudio.MeshKit {
 
 		public Mesh mesh;
 		public List<MonoTask> tasks;
+		public UnityEvent<Mesh> preExecute=null;
+		public UnityEvent<Mesh> postExecute=null;
 
 		#endregion Fields
 
@@ -27,12 +30,16 @@ namespace YouSingStudio.MeshKit {
 		}
 
 		public override void Run() {
+			preExecute?.Invoke(mesh);
+			//
 			MonoTask it;for(int i=0,imax=tasks?.Count??0;i<imax;++i) {
 				it=tasks[i];if(it!=null) {
 					if(mesh!=null) {it.Run(mesh);}
 					else {it.Run();}
 				}
 			}
+			//
+			postExecute?.Invoke(mesh);
 		}
 
 		#endregion Methods
