@@ -14,18 +14,6 @@ TexCoord7,Vector2,uv8,
 BlendWeight,BoneWeight,boneWeights,
  Macro.End --> */
 
-/* <!-- Macro.Copy
-		[System.Flags]
-		public enum Mask {
- Macro.End -->*/
-/* <!-- Macro.Call  VertexAttribute
-			{0}=1<<$(Table.Row),
- Macro.End --> */
-/* <!-- Macro.Copy
-			All=-1
-		}
-
- Macro.End --> */
 /* <!-- Macro.Call  VertexAttribute
 		[System.NonSerialized]public {1}[] {2}=null;
  Macro.End -->*/
@@ -66,30 +54,13 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Pool;
 using UnityEngine.Rendering;
+using Mask=YouSingStudio.MeshKit.VertexHelper.Mask;
 
 namespace YouSingStudio.MeshKit {
 	public class MeshVertexProbe
 		:MonoTask
 	{
 // <!-- Macro.Patch AutoGen
-		[System.Flags]
-		public enum Mask {
-			Position=1<<0,
-			Normal=1<<1,
-			Tangent=1<<2,
-			Color=1<<3,
-			TexCoord0=1<<4,
-			TexCoord1=1<<5,
-			TexCoord2=1<<6,
-			TexCoord3=1<<7,
-			TexCoord4=1<<8,
-			TexCoord5=1<<9,
-			TexCoord6=1<<10,
-			TexCoord7=1<<11,
-			BlendWeight=1<<12,
-			All=-1
-		}
-
 		[System.NonSerialized]public Vector3[] vertices=null;
 		[System.NonSerialized]public Vector3[] normals=null;
 		[System.NonSerialized]public Vector4[] tangents=null;

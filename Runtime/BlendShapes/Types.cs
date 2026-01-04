@@ -19,7 +19,13 @@ namespace YouSingStudio.MeshKit {
 		public BlendShapeFrame(Mesh mesh) {
 			vertices=mesh.vertices;
 			normals=mesh.normals;
-			//tangents=mesh.tangents;
+			tangents=new Vector3[mesh.tangents?.Length??0];
+		}
+
+		public virtual void AddTo(Mesh mesh,string key) {
+			if(mesh!=null) {
+				mesh.AddBlendShapeFrame(key,100.0f,vertices,normals,tangents);
+			}
 		}
 	}
 

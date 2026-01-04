@@ -34,7 +34,10 @@ namespace YouSingStudio.MeshKit {
 		public override void Flush(){
 			if(renderTexture!=null) {
 				PushRenderTexture(renderTexture);
-					if(texture!=null) {texture.ReadPixels(new Rect(Vector2.zero,size),0,0);}
+					if(texture!=null) {
+						if(texture.width!=size.x||texture.height!=size.y) {texture.Reinitialize(size.x,size.y);}
+						texture.ReadPixels(new Rect(Vector2.zero,size),0,0);
+					}
 				PopRenderTexture();
 				//
 				base.Flush();

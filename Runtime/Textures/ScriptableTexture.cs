@@ -32,6 +32,7 @@ namespace YouSingStudio.MeshKit {
 				UnityEditor.TextureImporter ti=UnityEditor.AssetImporter.GetAtPath(path) as UnityEditor.TextureImporter;
 				if(ti!=null) {
 					ti.isReadable=true;
+					ti.maxTextureSize=1024*8;
 					ti.textureCompression=UnityEditor.TextureImporterCompression.Uncompressed;
 					ti.SaveAndReimport();
 				}

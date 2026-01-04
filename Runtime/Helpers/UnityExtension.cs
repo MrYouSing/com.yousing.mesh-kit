@@ -604,6 +604,27 @@ namespace YouSingStudio.MeshKit {
 			return i;
 		}
 
+		public static Object FindSmart(this Transform thiz,string path) {
+			if(thiz!=null) {
+				int i=path.IndexOf('$'),j=path.IndexOf('@');
+				if(i>=0) {
+					thiz=thiz.FindEx(path.Substring(0,i));
+					if(j<0){
+						System.Type type=System.Type.GetType(path.Substring(i+1));
+						return thiz.GetComponent(type);
+					}else{
+						System.Type type=System.Type.GetType(path.Substring(i+1,j-i-1));
+						Component[] tmp=thiz.GetComponents(type);int.TryParse(path.Substring(j+1),out i);
+						j=tmp?.Length??0;
+						return j>0?tmp[Mathf.Min(i,j-1)]:null;
+					}
+				}else {
+					return thiz.FindEx(path);
+				}
+			}
+			return null;
+		}
+
 		public static Transform FindOrCreate(this Transform thiz,string path) {
 			if(thiz!=null&&!string.IsNullOrEmpty(path)) {
 				Transform tmp=thiz.Find(path);

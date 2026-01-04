@@ -44,13 +44,13 @@ namespace YouSingStudio.MeshKit {
 			return Color.black;
 		}
 
-		public override bool TestIndex(int index) {
-			return GetColor(uv[index])[channel]>cutoff;
-		}
+		public virtual bool TestUV(Vector2 uv)=>GetColor(uv)[channel]>cutoff;
+		public override bool TestIndex(int index)=>TestUV(uv[index]);
+		public override bool TestVertex(Vector3 vertex)=>TestUV(vertex);
 
 		public override bool TestTriangle(int a, int b, int c) {
 			bool ret=base.TestTriangle(a,b,c);
-			if(strict&&!ret) {ret=GetColor((uv[a]+uv[b]+uv[c])/3.0f)[channel]>cutoff;}
+			if(strict&&!ret) {ret=TestUV((uv[a]+uv[b]+uv[c])/3.0f);}
 			return ret;
 		}
 

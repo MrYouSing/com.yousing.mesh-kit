@@ -214,6 +214,17 @@ namespace YouSingStudio.MeshKit {
 			SetSubRenderersEnabled(false);
 		}
 
+		public virtual Mesh GetMesh() {
+			Mesh mesh=null;
+			if(mesh==null&&meshFilter!=null) {
+				mesh=meshFilter.sharedMesh;
+			}
+			if(mesh==null&&skinnedMeshRenderer!=null) {
+				mesh=skinnedMeshRenderer.sharedMesh;
+			}
+			return mesh;
+		}
+
 		#endregion Methods
 
 	}
